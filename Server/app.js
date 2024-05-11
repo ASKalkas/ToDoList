@@ -1,11 +1,12 @@
 const express = require('express')
+const cookieParser=require('cookie-parser')
 const http  = require('http')
 const app = express()
 const path  = require('path')
-var AWS = require('aws-sdk');
 const listRouter = require("./Routes/listRoutes");
 const userRouter = require("./Routes/userRoutes");
 const authRouter = require("./Routes/authRoutes");
+const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 require('dotenv').config();
 
 const cors = require("cors");
@@ -22,12 +23,9 @@ app.use(
     })
   );
 
-AWS.config.update({
-    region: process.env.AWS_REGION,
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-});
-
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+app.use("/api/v1", authRouter);
+app.use(authenticationMiddleware);
+app.use("/api/v1/list", listRouter);
+// app.use("/api/v1/users", userRouter);
 
 app.listen(3000, () => console.log('Server is running on http://localhost:3000'));

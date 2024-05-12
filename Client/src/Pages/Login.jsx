@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./AuthForm.css"; // Make sure to create this CSS file
+import "./Login.css"; // Make sure to create this CSS file
 
-const AuthForm = () => {
+const Login = () => {
 	const [isLogin, setIsLogin] = useState(true); // Toggle between Login and Register
 	const [profileImg, setProfileImg] = useState(null); // State for storing profile image
 	const [formData, setFormData] = useState({
@@ -135,4 +135,4 @@ const AuthForm = () => {
 	);
 };
 
-export default AuthForm;
+export default Login;

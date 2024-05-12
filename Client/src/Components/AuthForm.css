@@ -1,0 +1,89 @@
+/* src/components/AuthForm.css */
+body, html {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    font-family: 'Arial', sans-serif;  /* Ensures a clean, readable font is used */
+    background-color: #e9ecef;  /* Light gray background for the whole page */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-form-container {
+    background-color: #ffffff;  /* White background for the form */
+    padding: 40px;
+    border-radius: 10px;  /* Rounded corners for the form */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Subtle shadow for depth */
+    width: 340px;  /* Fixed width for the form */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-image-container {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background-color: #f8f9fa;  /* Slightly different background to distinguish the area */
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-placeholder {
+    font-size: 14px;
+    color: #6c757d;  /* Placeholder text color */
+}
+
+.image-upload {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.auth-form {
+    width: 100%;  /* Ensures the form elements align with the container width */
+}
+
+input, button {
+    width: 100%;  /* Full width for form elements */
+    padding: 12px;
+    margin-top: 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+}
+
+button {
+    background-color: #007bff;
+    color: #007bff;
+    border: none;
+    margin-top: 16px;  /* Extra spacing above the button */
+    cursor: pointer;
+    transition: background-color 1s;
+}
+
+button:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+.toggle-form {
+    background: none;
+    color: #007bff;
+    border: none;
+    cursor: pointer;
+    margin-top: 12px;
+}

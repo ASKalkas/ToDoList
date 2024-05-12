@@ -2,22 +2,26 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const secretKey = process.env.SECRET_KEY;
 const bcrypt = require("bcrypt");
+const fs = require("fs");
 const { randomUUID } = require("crypto");
 const dynamoDb = require("../dynamodb-config");
+const s3 = require("../s3-config");
 
 const userController = {
 	register: async (req, res) => {
 		try {
-			const { username, password, displayName, role /*, profilePicture*/ } =
-				req.body;
+			const { email, password, username, role } = req.body;
+
+			console.log(req.body);
+			console.log(req.file);
 
 			var params = {
 				TableName: "Users",
-				FilterExpression: "username = :usernameValue",
-				ExpressionAttributeValues: { ":usernameValue": username },
+				FilterExpression: "email = :emailValue",
+				ExpressionAttributeValues: { ":emailValue": email },
 			};
-			
-            const data = await dynamoDb.scan(params).promise();
+
+			const data = await dynamoDb.scan(params).promise();
 
 			if (data.Items.length > 0) {
 				throw new Error("User already exists");
@@ -25,24 +29,48 @@ const userController = {
 
 			const hashedPassword = await bcrypt.hash(password, 10);
 			const UserID = randomUUID();
-			params = {
+			const dynamoParams = {
 				TableName: "Users",
 				Item: {
 					UserID: UserID,
-					username: username,
+					email: email,
 					password: hashedPassword,
-					displayName: displayName,
+					username: username,
 					role: role,
 				},
 			};
 
-			dynamoDb.put(params, (err, data) => {
+			const fileContent = fs.readFileSync(req.file.path);
+
+			// Setting up S3 upload parameters
+			const S3params = {
+				Bucket: process.env.S3_BUCKET_NAME,
+				Key: UserID, // File name you want to save as in S3
+				Body: fileContent,
+				ContentType: "image/png", // Set the content type based on your file
+			};
+
+			dynamoDb.put(dynamoParams, (err, data) => {
 				if (err) {
-					res.status(500).send(err);
+					return res.status(500).send(err);
 				} else {
-					res.status(200).json({ message: "User registered successfully" });
+					// Uploading files to the bucket
+					s3.putObject(S3params, function (err, data) {
+						if (err) {
+							return res.status(500).send(err);
+						}
+						fs.unlink(req.file.path, (err) => {
+							if (err) {
+								console.error("Error deleting file:", err);
+								return;
+							}
+							console.log("File successfully deleted");
+						});
+					});
 				}
 			});
+
+			res.status(200).json({ message: "User registered successfully" });
 		} catch (err) {
 			res
 				.status(400)
@@ -51,24 +79,22 @@ const userController = {
 	},
 	login: async (req, res) => {
 		try {
-			const { username, password } = req.body;
+			const { email, password } = req.body;
+			console.log(req.body)
 			params = {
 				TableName: "Users",
-				FilterExpression: "username = :username",
+				FilterExpression: "email = :emailValue",
 				ExpressionAttributeValues: {
-					":username": username,
+					":emailValue": email,
 				},
 			};
 			const data = await dynamoDb.scan(params).promise();
-
-            console.log(data)
 
 			if (data.Items.length == 0) {
 				throw new Error("User doesn't exists");
 			}
 
 			const user = data.Items[0];
-			console.log(data);
 			const passwordMatch = await bcrypt.compare(password, user.password);
 
 			if (!passwordMatch) {
@@ -76,7 +102,7 @@ const userController = {
 			}
 
 			const currentDateTime = new Date();
-			const expiresAt = new Date(+currentDateTime + 1800000); // expire in 3 minutes
+			const expiresAt = new Date(currentDateTime + 1800000); // expire in 3 minutes
 			// Generate a JWT token
 			const token = jwt.sign(
 				{ user: { userId: user.UserID, role: user.role } },
@@ -100,12 +126,15 @@ const userController = {
 				if (err) {
 					res.status(500).send(err);
 				} else {
-					res.cookie("token", token, {
-                        expires: expiresAt,
-                        withCredentials: true,
-                        httpOnly: false,
-                        SameSite:'none'
-                      }).status(200).json({ message: "successfully logged in" });
+					res
+						.cookie("token", token, {
+							expires: expiresAt,
+							withCredentials: true,
+							httpOnly: false,
+							SameSite: "none",
+						})
+						.status(200)
+						.json({ message: "successfully logged in" });
 				}
 			});
 		} catch (err) {

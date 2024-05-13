@@ -26,6 +26,6 @@ app.use(
 app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
 app.use("/api/v1/list", listRouter);
-// app.use("/api/v1/users", userRouter);
+app.use("/api/v1/users", userRouter);
 
 app.listen(3000, () => console.log('Server is running on http://localhost:3000'));

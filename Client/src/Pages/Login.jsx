@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Login.css"; // Make sure to create this CSS file
 
 const Login = () => {
+	const navigate = useNavigate();
 	const [isLogin, setIsLogin] = useState(true); // Toggle between Login and Register
 	const [profileImg, setProfileImg] = useState(null); // State for storing profile image
 	const [formData, setFormData] = useState({
@@ -40,37 +42,38 @@ const Login = () => {
 			data.append("photo", formData.photo);
 
 			try {
-				for (let [key, value] of data.entries()) {
-					console.log(key, value);
-				}
 				const response = await axios.post(
 					"http://localhost:3000/api/v1/register",
-					data
+					data,
+					{ withCredentials: true }
 				);
-				console.log(response.data); // Handle success based on the response
-				if (response.status == 200) alert("Registration successful!");
-				else throw new Error(response.message);
+				console.log(response.data);
+				if (response.status == 200) {
+					alert("Registration successful!");
+					toggleForm();
+				} else throw new Error(response.message);
 			} catch (error) {
 				console.error("Registration failed:", error);
 				alert("Registration failed!");
 			}
 		} else {
-            const data = new FormData();
-			data.append("email", formData.email);
-			data.append("password", formData.password);
-
 			try {
 				const response = await axios.post(
 					"http://localhost:3000/api/v1/login",
 					{
 						email: formData.email,
 						password: formData.password,
-					}
+					},
+					{ withCredentials: true }
 				);
 				console.log(response.data); // Handle success based on the response
 				if (response.status == 200) {
 					alert("Login successful!");
-					// Optionally set user data in state or context, or redirect user
+					localStorage.setItem("UserID", response.data.user.UserID);
+					localStorage.setItem("role", response.data.user.role);
+					setTimeout(() => {
+						navigate("/");
+					}, 1000);
 				} else {
 					throw new Error(response.message);
 				}

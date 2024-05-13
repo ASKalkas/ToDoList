@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import NavigationBar from "../Components/NavigationBar";
 import "./Profile.css"; // Ensure you have this CSS file for styling
 
@@ -7,15 +8,59 @@ function Profile() {
 		username: "johndoe",
 		email: "john.doe@example.com",
 		role: "User",
-		profilePic: "https://via.placeholder.com/150", // Placeholder image
+		profilePic: "data:image/png;base64,", // Placeholder image
 	});
 	const [editMode, setEditMode] = useState(false);
 
+	useEffect(() => {
+		const fetchProfile = async () => {
+			try {
+				const response = await axios.get(
+					`http://localhost:3000/api/v1/users/profile?UserID=${localStorage.getItem(
+						"UserID"
+					)}`,
+					{ withCredentials: true }
+				);
+
+				const { username, email, role, profilePic } = response.data.profile;
+				console.log(response.data);
+				setUserProfile({
+					username: username,
+					email: email,
+					role: role,
+					profilePic: `data:image/png;base64,${profilePic}`,
+				});
+			} catch (error) {
+				console.error("profile wasn't obtained successfully:", error);
+			}
+		};
+		if (!localStorage.getItem("UserID")) {
+			navigate("/login");
+		}
+		fetchProfile();
+	}, []);
+
 	// Function to handle changing the profile picture
-	const handleImageChange = (event) => {
+	const handleImageChange = async (event) => {
 		if (event.target.files && event.target.files[0]) {
 			let img = URL.createObjectURL(event.target.files[0]);
 			setUserProfile({ ...userProfile, profilePic: img });
+
+			const data = new FormData();
+			data.append("photo", event.target.files[0]);
+
+			try {
+				const response = await axios.put(
+					`http://localhost:3000/api/v1/users/profilePicture?UserID=${localStorage.getItem(
+						"UserID"
+					)}`,
+					data,
+					{withCredentials: true},
+				);
+				console.log(response.data);
+			} catch (error) {
+				console.error("update failed", error);
+			}
 		}
 	};
 
@@ -26,7 +71,25 @@ function Profile() {
 	};
 
 	// Toggle edit mode
-	const toggleEdit = () => {
+	const toggleEdit = async () => {
+		if (editMode) {
+			try {
+				const response = await axios.put(
+					`http://localhost:3000/api/v1/users/profile?UserID=${localStorage.getItem(
+						"UserID"
+					)}`,
+					{
+						email: userProfile.email,
+						username: userProfile.username,
+						role: userProfile.role,
+					},
+					{ withCredentials: true }
+				);
+				console.log(response.data);
+			} catch (error) {
+				console.error("profile wasn't obtained successfully:", error);
+			}
+		}
 		setEditMode(!editMode);
 	};
 

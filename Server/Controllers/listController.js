@@ -35,7 +35,7 @@ const listController = {
 	},
 	getAll: async (req, res) => {
 		try {
-			const { userId, role } = req.user.role;
+			const { role } = req.user.role;
             var data;
             if(role == "admin"){
                 const params = {

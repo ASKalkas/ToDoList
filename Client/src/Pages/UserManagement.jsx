@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import NavigationBar from '../Components/NavigationBar';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import NavigationBar from "../Components/NavigationBar";
 import "./UserManagement.css"; // Ensure you create this CSS file for styling
 
 function UserManagement() {
@@ -9,19 +10,59 @@ function UserManagement() {
 		{ id: 3, username: "charlie", email: "charlie@example.com", role: "user" },
 	]);
 
-	const deleteUser = (userId) => {
-		setUsers(users.filter((user) => user.id !== userId));
+	useEffect(() => {
+		const fetchUsers = async () => {
+			try {
+				const response = await axios.get(
+					`http://localhost:3000/api/v1/users/`,
+					{ withCredentials: true }
+				);
+				console.log(response.data);
+				setUsers(response.data.data);
+			} catch (error) {
+				console.error("Getting Users Failed", error);
+			}
+		};
+		if (!localStorage.getItem("UserID")) {
+			navigate("/login");
+		}
+		fetchUsers();
+	}, []);
+
+	const deleteUser = async (userId) => {
+		try{
+			const response = await axios.delete(
+				`http://localhost:3000/api/v1/users/?UserID=${userId}`,
+				{ withCredentials: true }
+			);
+			console.log(response.data);
+			setUsers(users.filter((user) => user.UserID !== userId));
+		}catch (error) {
+			console.error("User wasn't deleted successfully:", error);
+		}
 	};
 
-	const editRole = (userId, newRole) => {
-		setUsers(
-			users.map((user) => {
-				if (user.id === userId) {
-					return { ...user, role: newRole };
-				}
-				return user;
-			})
-		);
+	const editRole = async (userId, newRole) => {
+		try {
+			const response = await axios.put(
+				`http://localhost:3000/api/v1/users/profile?UserID=${userId}`,
+				{ role: newRole },
+				{ withCredentials: true }
+			);
+
+			const { role } = response.data.profile;
+			console.log(response.data);
+			setUsers(
+				users.map((user) => {
+					if (user.UserID === userId) {
+						return { ...user, role: role };
+					}
+					return user;
+				})
+			);
+		} catch (error) {
+			console.error("profile wasn't updated successfully:", error);
+		}
 	};
 
 	return (
@@ -40,16 +81,18 @@ function UserManagement() {
 					</thead>
 					<tbody>
 						{users.map((user) => (
-							<tr key={user.id}>
+							<tr key={user.UserID}>
 								<td>{user.username}</td>
 								<td>{user.email}</td>
 								<td>{user.role}</td>
 								<td>
-									<button onClick={() => deleteUser(user.id)}>Delete</button>
+									<button onClick={() => deleteUser(user.UserID)}>
+										Delete
+									</button>
 									<button
 										onClick={() =>
 											editRole(
-												user.id,
+												user.UserID,
 												user.role === "admin" ? "user" : "admin"
 											)
 										}

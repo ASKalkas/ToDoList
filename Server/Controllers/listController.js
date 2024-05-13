@@ -1,12 +1,13 @@
 const { randomUUID } = require("crypto");
-const dynamoDb = require("../dynamodb-config");
+const dynamoDB = require("../dynamodb-config");
 
 const listController = {
 	addItem: async (req, res) => {
 		const ItemID = randomUUID();
-		const { title, description, date } = req.body;
+		const { UserID } = req.query;
+		const { title, description, dueDate } = req.body;
 		try {
-			const parsedDate = new Date(date);
+			const parsedDate = new Date(dueDate);
 			if (isNaN(parsedDate)) {
 				throw new Error("Invalid date format");
 			}
@@ -17,10 +18,12 @@ const listController = {
 					ItemID: ItemID,
 					title: title,
 					description: description,
-					date: isoDateString,
+					dueDate: isoDateString,
+					isDone: false,
+					UserID: UserID,
 				},
 			};
-			dynamoDb.put(params, (err, data) => {
+			dynamoDB.put(params, (err, data) => {
 				if (err) {
 					res.status(500).send(err);
 				} else {
@@ -36,26 +39,101 @@ const listController = {
 	getAll: async (req, res) => {
 		try {
 			const { role } = req.user.role;
-            var data;
-            if(role == "admin"){
-                const params = {
-                    TableName: 'Items'
-                };
+			var data;
+			if (role == "admin") {
+				const params = {
+					TableName: "Items",
+				};
 
-                data = await dynamoDb.scan(params).promise();
-            }else{
-                params = {
-                    TableName: "Items",
-                    FilterExpression: "UserID = :UserID",
-                    ExpressionAttributeValues: {
-                        ":UserID": req.user.userId,
-                    },
-                };
+				data = await dynamoDB.scan(params).promise();
+			} else {
+				const { UserID } = req.query;
+				params = {
+					TableName: "Items",
+					FilterExpression: "UserID = :UserID",
+					ExpressionAttributeValues: {
+						":UserID": UserID,
+					},
+				};
 
-                data = await dynamoDb.scan(params).promise();
-            }
+				data = await dynamoDB.scan(params).promise();
+				data = data.Items;
+			}
 
-            res.status(200).json({message: "Items Obtained Successfully", data: data})
+			res
+				.status(200)
+				.json({ message: "Items Obtained Successfully", data: data });
+		} catch (err) {
+			res
+				.status(400)
+				.json({ error: "Failed to process request", details: err.message });
+		}
+	},
+	updateItem: async (req, res) => {
+		try {
+			const { ItemID } = req.query;
+			const { title, description, dueDate, isDone } = req.body;
+
+			params = {
+				TableName: "Items", // replace 'Users' with your actual table name
+				Key: {
+					ItemID: ItemID,
+				},
+				ExpressionAttributeNames: {
+					"#title": "title",
+					"#description": "description",
+					"#dueDate": "dueDate",
+					"#isDone": "isDone",
+				},
+				ExpressionAttributeValues: {
+					":title": title,
+					":description": description,
+					":dueDate": dueDate,
+					":isDone": isDone,
+				},
+				UpdateExpression:
+					"SET #title = :title, #description = :description, #dueDate = :dueDate, #isDone = :isDone",
+				ReturnValues: "ALL_NEW", // returns the updated item
+			};
+
+			dynamoDB.update(params, function (err, data) {
+				if (err) {
+					res
+						.status(500)
+						.json({ error: "Failed to process request", details: err.message });
+				} else {
+					res.status(200).json({
+						message: "Item Updated Successfully",
+						profile: data.Attributes,
+					});
+				}
+			});
+		} catch (err) {
+			res
+				.status(400)
+				.json({ error: "Failed to process request", details: err.message });
+		}
+	},
+	deleteItem: async (req, res) => {
+		try {
+			const { ItemID } = req.query;
+
+			const deleteParams = {
+				TableName: "Items",
+				Key: {
+					ItemID: ItemID,
+				},
+			};
+
+			await dynamoDB.delete(deleteParams, (deleteErr, deleteData) => {
+				if (deleteErr) {
+					throw new Error(deleteErr);
+				} else {
+					console.log("Item deleted successfully:", deleteData);
+				}
+			});
+
+			res.status(200).json({ message: "User Deleted Successfully" });
 		} catch (err) {
 			res
 				.status(400)

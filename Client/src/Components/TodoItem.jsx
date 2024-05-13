@@ -8,6 +8,19 @@ function TodoItem({ item, onEdit, onMarkAsDone, onDelete }) {
 	const toggleDescription = () => {
 		setIsExpanded(!isExpanded);
 	};
+
+	const convertDate = (date) => {
+		let newDate = new Date(date);
+
+		// Extract the day, month, and year from the date object
+		const day = newDate.getDate().toString().padStart(2, "0");
+		const month = (newDate.getMonth() + 1).toString().padStart(2, "0"); // getMonth() is zero-indexed
+		const year = newDate.getFullYear();
+
+		// Format the date as dd/mm/yyyy
+		const formattedDate = `${day}/${month}/${year}`;
+		return formattedDate;
+	};
 	return (
 		<div className="todo-item">
 			<h3>{item.title}</h3>
@@ -17,14 +30,14 @@ function TodoItem({ item, onEdit, onMarkAsDone, onDelete }) {
 			>
 				{item.description}
 			</p>
-			<p>Due by: {item.dueDate}</p>
+			<p>Due by: {convertDate(item.dueDate)}</p>
 			<p>Status: {item.isDone ? "Done" : "Pending"}</p>
 			<div>
-				<button onClick={() => onEdit(item.id)}>Edit</button>
-				<button onClick={() => onMarkAsDone(item.id)}>
+				<button onClick={() => onEdit(item.ItemID)}>Edit</button>
+				<button onClick={() => onMarkAsDone(item.ItemID)}>
 					{item.isDone ? "Undo" : "Mark as Done"}
 				</button>
-				<button onClick={() => onDelete(item.id)}>Delete</button>
+				<button onClick={() => onDelete(item.ItemID)}>Delete</button>
 			</div>
 		</div>
 	);

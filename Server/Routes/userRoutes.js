@@ -37,12 +37,24 @@ router.put(
 	authorizationMiddleware(["admin", "user"]),
 	userController.updateProfile
 );
-//updateProfilePicture
+// updateProfilePicture
 router.put(
 	"/profilePicture",
 	authorizationMiddleware(["admin", "user"]),
 	upload.single("photo"),
 	userController.updateProfilePicture
+);
+// getUsers
+router.get(
+	"/",
+	authorizationMiddleware(["admin"]),
+	userController.getUsers
+);
+// deleteUser
+router.delete(
+	"/",
+	authorizationMiddleware(["admin"]),
+	userController.deleteUser
 );
 
 module.exports = router;

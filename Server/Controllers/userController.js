@@ -246,26 +246,41 @@ const userController = {
 		try {
 			const { UserID } = req.query;
 			const { email, username, role } = req.body;
+			let params;
 
-			const params = {
-				TableName: "Users", // replace 'Users' with your actual table name
-				Key: {
-					UserID: UserID, // the ID of the user to update
-				},
-				ExpressionAttributeNames: {
-					"#email": "email",
-					"#username": "username",
-					"#role": "role",
-				},
-				ExpressionAttributeValues: {
-					":email": email,
-					":username": username,
-					":role": role,
-				},
-				UpdateExpression:
-					"SET #email = :email, #username = :username, #role = :role",
-				ReturnValues: "ALL_NEW", // returns the updated item
-			};
+			if (!role && req.user.role == "admin") {
+				params = {
+					TableName: "Users", // replace 'Users' with your actual table name
+					Key: {
+						UserID: UserID, // the ID of the user to update
+					},
+					ExpressionAttributeNames: {
+						"#email": "email",
+						"#username": "username",
+					},
+					ExpressionAttributeValues: {
+						":email": email,
+						":username": username,
+					},
+					UpdateExpression: "SET #email = :email, #username = :username",
+					ReturnValues: "ALL_NEW", // returns the updated item
+				};
+			} else {
+				params = {
+					TableName: "Users", // replace 'Users' with your actual table name
+					Key: {
+						UserID: UserID, // the ID of the user to update
+					},
+					ExpressionAttributeNames: {
+						"#role": "role",
+					},
+					ExpressionAttributeValues: {
+						":role": role,
+					},
+					UpdateExpression: "SET #role = :role",
+					ReturnValues: "ALL_NEW", // returns the updated item
+				};
+			}
 
 			dynamoDB.update(params, function (err, data) {
 				if (err) {
@@ -277,7 +292,7 @@ const userController = {
 					});
 				}
 			});
-		} catch (error) {
+		} catch (err) {
 			res
 				.status(400)
 				.json({ error: "Failed to process request", details: err.message });
@@ -312,6 +327,77 @@ const userController = {
 					.status(200)
 					.json({ message: "Photo Updated successfully", data: data });
 			});
+		} catch (err) {
+			res
+				.status(400)
+				.json({ error: "Failed to process request", details: err.message });
+		}
+	},
+	getUsers: async (req, res) => {
+		try {
+			const params = {
+				TableName: "Users",
+			};
+
+			const data = await dynamoDB.scan(params).promise();
+			const users = data.Items;
+
+			res
+				.status(200)
+				.json({ message: "Users Obtained Successfully", data: users });
+		} catch (err) {
+			res
+				.status(400)
+				.json({ error: "Failed to process request", details: err.message });
+		}
+	},
+	deleteUser: async (req, res) => {
+		try {
+			const { UserID } = req.query;
+
+			const deleteParams = {
+				TableName: "Users",
+				Key: {
+					UserID: UserID,
+				},
+			};
+
+			await dynamoDB
+				.delete(deleteParams, (deleteErr, deleteData) => {
+					if (deleteErr) {
+						throw new Error(deleteErr);
+					} else {
+						console.log("User deleted successfully:", deleteData);
+						s3.listObjectVersions(
+							{ Bucket: process.env.S3_BUCKET_NAME, Prefix: UserID },
+							function (err, data) {
+								if (err) {
+									console.log(err, err.stack); // an error occurred
+								} else {
+									// For each version, including delete markers, delete the version
+									for (let version of data.Versions) {
+										let deleteParams = {
+											Bucket: process.env.S3_BUCKET_NAME,
+											Key: UserID,
+											VersionId: version.VersionId,
+										};
+
+										s3.deleteObject(deleteParams, function (err, data) {
+											if (err) {
+												console.log(err, err.stack); // an error occurred
+											} else {
+												console.log("Deleted version: " + version.VersionId); // successful response
+											}
+										});
+									}
+								}
+							}
+						);
+					}
+				})
+				.promise();
+
+			res.status(200).json({ message: "User Deleted Successfully" });
 		} catch (err) {
 			res
 				.status(400)

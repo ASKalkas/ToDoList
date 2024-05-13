@@ -1,5 +1,6 @@
 // src/components/TodoItem.js
-import React, { useState } from "react";
+import { useState } from "react";
+import PropTypes from 'prop-types';
 import "./TodoList.css";
 
 function TodoItem({ item, onEdit, onMarkAsDone, onDelete }) {
@@ -42,5 +43,18 @@ function TodoItem({ item, onEdit, onMarkAsDone, onDelete }) {
 		</div>
 	);
 }
+
+TodoItem.propTypes = {
+    item: PropTypes.shape({
+        title: PropTypes.string,
+        description: PropTypes.string,
+        dueDate: PropTypes.string,
+        isDone: PropTypes.bool,
+        ItemID: PropTypes.string
+    }).isRequired,
+    onEdit: PropTypes.func.isRequired,
+    onMarkAsDone: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired
+};
 
 export default TodoItem;

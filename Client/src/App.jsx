@@ -1,9 +1,8 @@
-import React from "react";
 import Login from "./Pages/Login";
 import HomePage from "./Pages/HomePage";
 import UserManagement from "./Pages/UserManagement";
 import Profile from "./Pages/Profile";
-import { Route, Router, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
 
 function App() {

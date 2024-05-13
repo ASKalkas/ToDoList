@@ -1,5 +1,5 @@
 // src/HomePage.js
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import TodoList from "../Components/TodoList";
@@ -75,7 +75,7 @@ function HomePage() {
 	};
 
 	const handleMarkAsDone = (ItemID) => {
-		const newTodos = todos.map(async (item, idx) => {
+		todos.map(async (item, idx) => {
 			if (ItemID === item.ItemID) {
 				const updatedItem = { ...item, isDone: !item.isDone };
 				try {
@@ -89,9 +89,7 @@ function HomePage() {
 					console.error("Item wasn't updated successfully:", error);
 				}
 				todos[idx] = updatedItem;
-				return updatedItem;
 			}
-			return item;
 		});
 		setTimeout(() => {
 			fetchTodos();

@@ -1,6 +1,6 @@
 // src/components/TodoList.js
-import React from "react";
 import TodoItem from "./TodoItem";
+import PropTypes from 'prop-types';
 import './TodoList.css'
 
 function TodoList({ items, onEdit, onMarkAsDone, onDelete }) {
@@ -18,5 +18,14 @@ function TodoList({ items, onEdit, onMarkAsDone, onDelete }) {
 		</div>
 	);
 }
+
+TodoList.propTypes = {
+    items: PropTypes.arrayOf(PropTypes.shape({
+        title: PropTypes.string,
+    })).isRequired,
+    onEdit: PropTypes.func.isRequired,
+    onMarkAsDone: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired
+};
 
 export default TodoList;

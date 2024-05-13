@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import NavigationBar from "../Components/NavigationBar";
 import "./Profile.css"; // Ensure you have this CSS file for styling
@@ -11,6 +12,7 @@ function Profile() {
 		profilePic: "data:image/png;base64,", // Placeholder image
 	});
 	const [editMode, setEditMode] = useState(false);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchProfile = async () => {

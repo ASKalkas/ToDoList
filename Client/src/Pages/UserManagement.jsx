@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import NavigationBar from "../Components/NavigationBar";
 import "./UserManagement.css"; // Ensure you create this CSS file for styling
@@ -9,6 +10,7 @@ function UserManagement() {
 		{ id: 2, username: "bob", email: "bob@example.com", role: "user" },
 		{ id: 3, username: "charlie", email: "charlie@example.com", role: "user" },
 	]);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchUsers = async () => {

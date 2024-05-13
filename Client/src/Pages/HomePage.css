@@ -1,0 +1,35 @@
+.home-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background-color: #e9ecef;
+    font-family: 'Arial', sans-serif;
+}
+
+.add-item-button {
+    position: fixed; /* Fixed positioning relative to the viewport */
+    bottom: 20px; /* 20px from the bottom */
+    left: 20px; /* 20px from the left */
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: #007bff; /* Primary button color */
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.add-item-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.home-page h1 {
+    color: #333; /* Dark grey color for the text */
+    font-size: 24px; /* Suitable font size for the title */
+    text-align: center; /* Center-align the title */
+    margin-top: 20px; /* Space above the title */
+    margin-bottom: 20px; /* Space below the title */
+}
+

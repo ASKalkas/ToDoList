@@ -1,6 +1,6 @@
 /* src/components/AuthForm.css */
 body, html {
-    height: 100%;
+    height: max-content;
     width: 100%;
     margin: 0;
     font-family: 'Arial', sans-serif;  /* Ensures a clean, readable font is used */
@@ -58,24 +58,23 @@ body, html {
     width: 100%;  /* Ensures the form elements align with the container width */
 }
 
-input, button {
-    width: 100%;  /* Full width for form elements */
+.auth-form input, .auth-form button {
+    width: 80%;  /* Full width for form elements */
     padding: 12px;
     margin-top: 8px;
     border-radius: 5px;
     border: 1px solid #ced4da;
 }
 
-button {
-    background-color: #007bff;
+.auth-form button {
+    background-color: #e9ecef;
     color: #007bff;
     border: none;
-    margin-top: 16px;  /* Extra spacing above the button */
+    margin-top: 16px;
     cursor: pointer;
-    transition: background-color 1s;
 }
 
-button:hover {
+.auth-form button:hover {
     background-color: #0056b3;
     color: white;
 }
@@ -86,4 +85,9 @@ button:hover {
     border: none;
     cursor: pointer;
     margin-top: 12px;
+}
+
+.toggle-form:hover {
+    background-color: #0056b3;
+    color: white;
 }

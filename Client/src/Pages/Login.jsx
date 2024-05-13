@@ -82,7 +82,7 @@ const Login = () => {
 	};
 
 	return (
-		<>
+		<div className="auth-page">
 			<div className="auth-form-container">
 				{!isLogin && (
 					<div className="profile-image-container">
@@ -131,7 +131,7 @@ const Login = () => {
 					? "Need an account? Register"
 					: "Already have an account? Login"}
 			</button>
-		</>
+		</div>
 	);
 };
 

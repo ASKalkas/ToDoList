@@ -1,0 +1,57 @@
+.todo-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Creates as many columns as needed with a minimum width of 250px and maximum of 1fr */
+    place-items: center;
+    gap: 10px; /* Space between grid items */
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Adjust based on layout needs */
+    max-width: 1000px; /* Maximum width */
+    overflow: auto;
+    margin-top: auto; /* Centering the container */
+}
+
+
+.todo-item {
+    background-color: #1b1e22;
+    color: beige;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    width: 70%;
+    display: grid;
+    grid-template-columns: 1fr; /* All content in a single column */
+    grid-template-rows: auto auto; /* Two rows: one for text, one for buttons */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.todo-item button {
+    padding: 5px 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.todo-item button:hover {
+    background-color: #0056b3;
+}
+
+.todo-item-description {
+    font-size: 14px;
+    color: #666;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* Ensures the text is on one line */
+    cursor: pointer; /* Indicates the text is clickable */
+    max-width: 90%; /* Adjust based on your layout */
+}
+
+.todo-item-description.expanded {
+    white-space: normal; /* Allows text to wrap */
+}

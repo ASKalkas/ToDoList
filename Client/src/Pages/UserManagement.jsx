@@ -16,7 +16,7 @@ function UserManagement() {
 		const fetchUsers = async () => {
 			try {
 				const response = await axios.get(
-					`http://localhost:3000/api/v1/users/`,
+					`${process.env.REACT_APP_BACKEND_IP}api/v1/users/`,
 					{ withCredentials: true }
 				);
 				console.log(response.data);
@@ -34,7 +34,7 @@ function UserManagement() {
 	const deleteUser = async (userId) => {
 		try{
 			const response = await axios.delete(
-				`http://localhost:3000/api/v1/users/?UserID=${userId}`,
+				`${process.env.REACT_APP_BACKEND_IP}api/v1/users/?UserID=${userId}`,
 				{ withCredentials: true }
 			);
 			console.log(response.data);
@@ -47,7 +47,7 @@ function UserManagement() {
 	const editRole = async (userId, newRole) => {
 		try {
 			const response = await axios.put(
-				`http://localhost:3000/api/v1/users/profile?UserID=${userId}`,
+				`${process.env.REACT_APP_BACKEND_IP}api/v1/users/profile?UserID=${userId}`,
 				{ role: newRole },
 				{ withCredentials: true }
 			);

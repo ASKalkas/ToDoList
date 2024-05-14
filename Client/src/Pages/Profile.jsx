@@ -18,7 +18,7 @@ function Profile() {
 		const fetchProfile = async () => {
 			try {
 				const response = await axios.get(
-					`http://localhost:3000/api/v1/users/profile?UserID=${localStorage.getItem(
+					`${process.env.REACT_APP_BACKEND_IP}api/v1/users/profile?UserID=${localStorage.getItem(
 						"UserID"
 					)}`,
 					{ withCredentials: true }
@@ -53,7 +53,7 @@ function Profile() {
 
 			try {
 				const response = await axios.put(
-					`http://localhost:3000/api/v1/users/profilePicture?UserID=${localStorage.getItem(
+					`${process.env.REACT_APP_BACKEND_IP}api/v1/users/profilePicture?UserID=${localStorage.getItem(
 						"UserID"
 					)}`,
 					data,
@@ -77,7 +77,7 @@ function Profile() {
 		if (editMode) {
 			try {
 				const response = await axios.put(
-					`http://localhost:3000/api/v1/users/profile?UserID=${localStorage.getItem(
+					`${process.env.REACT_APP_BACKEND_IP}api/v1/users/profile?UserID=${localStorage.getItem(
 						"UserID"
 					)}`,
 					{

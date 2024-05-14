@@ -34,7 +34,7 @@ function HomePage() {
 	const fetchTodos = async () => {
 		try {
 			const response = await axios.get(
-				`http://localhost:3000/api/v1/list?UserID=${localStorage.getItem(
+				`${process.env.REACT_APP_BACKEND_IP}api/v1/list?UserID=${localStorage.getItem(
 					"UserID"
 				)}`,
 				{ withCredentials: true }
@@ -80,7 +80,7 @@ function HomePage() {
 				const updatedItem = { ...item, isDone: !item.isDone };
 				try {
 					const response = await axios.put(
-						`http://localhost:3000/api/v1/list?ItemID=${updatedItem.ItemID}`,
+						`${process.env.REACT_APP_BACKEND_IP}api/v1/list?ItemID=${updatedItem.ItemID}`,
 						updatedItem,
 						{ withCredentials: true }
 					);
@@ -99,7 +99,7 @@ function HomePage() {
 	const handleDelete = async (ItemID) => {
 		try {
 			const response = await axios.delete(
-				`http://localhost:3000/api/v1/list/?ItemID=${ItemID}`,
+				`${process.env.REACT_APP_BACKEND_IP}api/v1/list/?ItemID=${ItemID}`,
 				{ withCredentials: true }
 			);
 			console.log(response.data);
@@ -127,7 +127,7 @@ function HomePage() {
 				const data = { ...newTodo, isDone: false };
 				try {
 					const response = await axios.post(
-						`http://localhost:3000/api/v1/list?UserID=${localStorage.getItem(
+						`${process.env.REACT_APP_BACKEND_IP}api/v1/list?UserID=${localStorage.getItem(
 							"UserID"
 						)}`,
 						data,
@@ -144,7 +144,7 @@ function HomePage() {
 				const data = { ...newTodo };
 				try {
 					const response = await axios.put(
-						`http://localhost:3000/api/v1/list?ItemID=${data.ItemID}`,
+						`${process.env.REACT_APP_BACKEND_IP}api/v1/list?ItemID=${data.ItemID}`,
 						data,
 						{ withCredentials: true }
 					);

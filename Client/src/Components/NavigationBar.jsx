@@ -7,7 +7,7 @@ function NavigationBar() {
 	const handleLogout = async () => {
 		try {
 			const response = await axios.delete(
-				`http://localhost:3000/api/v1/users/logout?UserID=${localStorage.getItem("UserID")}`,
+				`${process.env.REACT_APP_BACKEND_IP}api/v1/users/logout?UserID=${localStorage.getItem("UserID")}`,
 				{ withCredentials: true }
 			);
             console.log(response.message)

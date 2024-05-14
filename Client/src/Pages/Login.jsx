@@ -43,7 +43,7 @@ const Login = () => {
 
 			try {
 				const response = await axios.post(
-					"http://localhost:3000/api/v1/register",
+					`${process.env.REACT_APP_BACKEND_IP}api/v1/register`,
 					data,
 					{ withCredentials: true }
 				);
@@ -58,8 +58,9 @@ const Login = () => {
 			}
 		} else {
 			try {
+				console.log(process.env.REACT_APP_BACKEND_IP);
 				const response = await axios.post(
-					"http://172.31.36.55/api/v1/login",
+					`${process.env.REACT_APP_BACKEND_IP}api/v1/login`,
 					{
 						email: formData.email,
 						password: formData.password,

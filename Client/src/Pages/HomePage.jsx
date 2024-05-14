@@ -123,7 +123,6 @@ function HomePage() {
 	const handleSubmit = async () => {
 		if (newTodo.title && newTodo.description && newTodo.dueDate) {
 			if (!isEditing) {
-				setTodos([...todos, { ...newTodo, isDone: false }]);
 				setShowForm(false);
 				const data = { ...newTodo, isDone: false };
 				try {
@@ -171,12 +170,12 @@ function HomePage() {
 			<div className="home-page">
 				<div>
 					<h1>My Todo List</h1>
-					<TodoList
+					{todos && <TodoList
 						items={todos}
 						onEdit={handleEdit}
 						onMarkAsDone={handleMarkAsDone}
 						onDelete={handleDelete}
-					/>
+					/>}
 					<button className="add-item-button" onClick={handleAddItem}>
 						Add Item
 					</button>
@@ -205,7 +204,7 @@ function HomePage() {
 									<input
 										type="date"
 										name="dueDate"
-										value={convertDate(newTodo.dueDate)}
+										value={convertDate(newTodo.dueDate) == "NaN-NaN-NaN"? convertDate((new Date()).toISOString()):convertDate(newTodo.dueDate)}
 										onChange={handleFormChange}
 										min={new Date().toISOString().split('T')[0]}
 									/>

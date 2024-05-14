@@ -24,8 +24,8 @@ function Profile() {
 					{ withCredentials: true }
 				);
 
-				const { username, email, role, profilePic } = response.data.profile;
 				console.log(response.data);
+				const { username, email, role, profilePic } = response.data.profile;
 				setUserProfile({
 					username: username,
 					email: email,

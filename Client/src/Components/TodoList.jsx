@@ -6,7 +6,7 @@ import './TodoList.css'
 function TodoList({ items, onEdit, onMarkAsDone, onDelete }) {
 	return (
 		<div className="todo-list-container">
-			{items.map((item, index) => (
+			{items && items.map((item, index) => (
 				<TodoItem
 					key={index}
 					item={item}

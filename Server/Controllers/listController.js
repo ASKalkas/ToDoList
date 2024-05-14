@@ -38,7 +38,7 @@ const listController = {
 	},
 	getAll: async (req, res) => {
 		try {
-			const { role } = req.user.role;
+			const { role } = req.user;
 			var data;
 			if (role == "admin") {
 				const params = {
@@ -46,6 +46,7 @@ const listController = {
 				};
 
 				data = await dynamoDB.scan(params).promise();
+
 			} else {
 				const { UserID } = req.query;
 				params = {
@@ -57,9 +58,9 @@ const listController = {
 				};
 
 				data = await dynamoDB.scan(params).promise();
-				data = data.Items;
 			}
-
+			
+			data = data.Items;
 			res
 				.status(200)
 				.json({ message: "Items Obtained Successfully", data: data });

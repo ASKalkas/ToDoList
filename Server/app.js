@@ -10,7 +10,7 @@ const authenticationMiddleware = require("./Middleware/authenticationMiddleware"
 require('dotenv').config();
 
 const _dirname = path.dirname("")
-const buildPath = path.join(_dirname  , "../client/dist");
+const buildPath = path.join(_dirname  , "../Client/build");
 
 const cors = require("cors");
 app.use(express.json());
@@ -26,24 +26,25 @@ app.use(
   })
 );
 
-// app.use(express.static(buildPath));
-
-// app.get("/*", function(req, res){
-
-//   res.sendFile(
-//       path.join(__dirname, "../Client/dist/index.html"),
-//       function (err) {
-//         if (err) {
-//           res.status(500).send(err);
-//         }
-//       }
-//     );
-
-// })
 
 app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
 app.use("/api/v1/list", listRouter);
 app.use("/api/v1/users", userRouter);
+
+app.use(express.static(buildPath))
+
+app.get("/*", function(req, res){
+
+    res.sendFile(
+        path.join(__dirname, "../Client/build/index.html"),
+        function (err) {
+          if (err) {
+            res.status(500).send(err);
+          }
+        }
+      );
+
+})
 
 app.listen(3000, () => console.log('Server is running on http://localhost:3000'));

@@ -51,7 +51,7 @@ const userController = {
 
 			// Setting up S3 upload parameters
 			const S3params = {
-				Bucket: process.env.S3_BUCKET_NAME,
+				Bucket: process.env.S3_BEFORE_BUCKET_NAME,
 				Key: UserID, // File name you want to save as in S3
 				Body: fileContent,
 				ContentType: "image/png", // Set the content type based on your file
@@ -74,12 +74,12 @@ const userController = {
 							console.log("File successfully deleted");
 						});
 					});
+
+					res
+						.status(200)
+						.json({ message: "User registered successfully", user: user });
 				}
 			});
-
-			res
-				.status(200)
-				.json({ message: "User registered successfully", user: user });
 		} catch (err) {
 			res
 				.status(400)
@@ -213,7 +213,7 @@ const userController = {
 				} else {
 					const profile = data.Items[0];
 					const params = {
-						Bucket: process.env.S3_BUCKET_NAME, // replace 'your-bucket-name' with the name of your S3 bucket
+						Bucket: process.env.S3_AFTER_BUCKET_NAME, // replace 'your-bucket-name' with the name of your S3 bucket
 						Key: UserID, // replace 'your-image-key' with the key of the image you want to get
 					};
 
@@ -305,7 +305,7 @@ const userController = {
 
 			// Setting up S3 upload parameters
 			const S3params = {
-				Bucket: process.env.S3_BUCKET_NAME,
+				Bucket: process.env.S3_BEFORE_BUCKET_NAME,
 				Key: UserID, // File name you want to save as in S3
 				Body: fileContent,
 				ContentType: "image/png", // Set the content type based on your file
@@ -369,7 +369,7 @@ const userController = {
 					} else {
 						console.log("User deleted successfully:", deleteData);
 						s3.listObjectVersions(
-							{ Bucket: process.env.S3_BUCKET_NAME, Prefix: UserID },
+							{ Bucket: process.env.S3_BEFORE_BUCKET_NAME, Prefix: UserID },
 							function (err, data) {
 								if (err) {
 									console.log(err, err.stack); // an error occurred
@@ -377,7 +377,32 @@ const userController = {
 									// For each version, including delete markers, delete the version
 									for (let version of data.Versions) {
 										let deleteParams = {
-											Bucket: process.env.S3_BUCKET_NAME,
+											Bucket: process.env.S3_BEFORE_BUCKET_NAME,
+											Key: UserID,
+											VersionId: version.VersionId,
+										};
+
+										s3.deleteObject(deleteParams, function (err, data) {
+											if (err) {
+												console.log(err, err.stack); // an error occurred
+											} else {
+												console.log("Deleted version: " + version.VersionId); // successful response
+											}
+										});
+									}
+								}
+							}
+						);
+						s3.listObjectVersions(
+							{ Bucket: process.env.S3_AFTER_BUCKET_NAME, Prefix: UserID },
+							function (err, data) {
+								if (err) {
+									console.log(err, err.stack); // an error occurred
+								} else {
+									// For each version, including delete markers, delete the version
+									for (let version of data.Versions) {
+										let deleteParams = {
+											Bucket: process.env.S3_AFTER_BUCKET_NAME,
 											Key: UserID,
 											VersionId: version.VersionId,
 										};

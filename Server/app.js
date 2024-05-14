@@ -35,16 +35,16 @@ app.use("/api/v1/users", userRouter);
 app.use(express.static(buildPath))
 
 app.get("/*", function(req, res){
-
-    res.sendFile(
-        path.join(__dirname, "../Client/build/index.html"),
-        function (err) {
-          if (err) {
-            res.status(500).send(err);
-          }
-        }
-      );
-
+  
+  res.sendFile(
+    path.join(__dirname, "../Client/build/index.html"),
+    function (err) {
+      if (err) {
+        res.status(500).send(err);
+      }
+    }
+  );
+  
 })
 
 app.listen(3000, () => console.log('Server is running on http://localhost:3000'));

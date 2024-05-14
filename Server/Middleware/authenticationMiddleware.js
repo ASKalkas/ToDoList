@@ -7,15 +7,14 @@ module.exports = function authenticationMiddleware(req, res, next) {
 
 	console.log(req.headers);
 
-		if (!cookie) {
-			return res.status(401).json({ message: "No Cookie provided" });
-		}
+	if (!cookie) {
+		return res.status(401).json({ message: "No Cookie provided" });
+	}
 
-		const token = cookie.token;
-		if (!token) {
-			next()
-		}
-
+	const token = cookie.token;
+	if (!token) {
+		next();
+	} else {
 		jwt.verify(token, secretKey, (error, decoded) => {
 			if (error) {
 				return res.status(403).json({ message: "Invalid token" });
@@ -28,3 +27,4 @@ module.exports = function authenticationMiddleware(req, res, next) {
 			next();
 		});
 	}
+};

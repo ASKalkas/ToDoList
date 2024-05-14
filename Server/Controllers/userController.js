@@ -143,7 +143,7 @@ const userController = {
 							maxAge: 3 * 60 * 60 * 1000,
 							withCredentials: true,
 							httpOnly: false,
-							SameSite: "none",
+							sameSite: "lax",
 						})
 						.status(200)
 						.send({ message: "successfully logged in", user: user });

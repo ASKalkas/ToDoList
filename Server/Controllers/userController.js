@@ -255,14 +255,12 @@ const userController = {
 						UserID: UserID, // the ID of the user to update
 					},
 					ExpressionAttributeNames: {
-						"#email": "email",
-						"#username": "username",
+						"#role": "role",
 					},
 					ExpressionAttributeValues: {
-						":email": email,
-						":username": username,
+						":role": role,
 					},
-					UpdateExpression: "SET #email = :email, #username = :username",
+					UpdateExpression: "SET #role = :role",
 					ReturnValues: "ALL_NEW", // returns the updated item
 				};
 			} else {
@@ -272,12 +270,14 @@ const userController = {
 						UserID: UserID, // the ID of the user to update
 					},
 					ExpressionAttributeNames: {
-						"#role": "role",
+						"#email": "email",
+						"#username": "username",
 					},
 					ExpressionAttributeValues: {
-						":role": role,
+						":email": email,
+						":username": username,
 					},
-					UpdateExpression: "SET #role = :role",
+					UpdateExpression: "SET #email = :email, #username = :username",
 					ReturnValues: "ALL_NEW", // returns the updated item
 				};
 			}

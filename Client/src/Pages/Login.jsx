@@ -59,7 +59,7 @@ const Login = () => {
 		} else {
 			try {
 				const response = await axios.post(
-					"http://172.31.1.18/api/v1/login",
+					"http://172.31.36.55/api/v1/login",
 					{
 						email: formData.email,
 						password: formData.password,
